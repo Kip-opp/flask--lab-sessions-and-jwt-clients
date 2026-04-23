@@ -1,59 +1,51 @@
-import { useState } from "react";
-import styled from "styled-components";
-import LoginForm from "../components/LoginForm";
-import SignUpForm from "../components/SignUpForm";
-import { Button } from "../styles";
+import React, { useState } from "react";
 
 function Login({ onLogin }) {
-  const [showLogin, setShowLogin] = useState(true);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.token) {
+          onLogin(data.token, data.user);
+        } else {
+          setError(data.message || "Login failed.");
+        }
+      });
+  };
 
   return (
-    <Wrapper>
-      <Logo>My App</Logo>
-      {showLogin ? (
-        <>
-          <LoginForm onLogin={onLogin} />
-          <Divider />
-          <p>
-            Don't have an account? &nbsp;
-            <Button color="secondary" onClick={() => setShowLogin(false)}>
-              Sign Up
-            </Button>
-          </p>
-        </>
-      ) : (
-        <>
-          <SignUpForm onLogin={onLogin} />
-          <Divider />
-          <p>
-            Already have an account? &nbsp;
-            <Button color="secondary" onClick={() => setShowLogin(true)}>
-              Log In
-            </Button>
-          </p>
-        </>
-      )}
-    </Wrapper>
+    <div style={{ maxWidth: "400px", margin: "80px auto", padding: "0 16px" }}>
+      <h2>Login</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button style={{ background: "#6600cc", color: "#fff" }} type="submit">
+          Login
+        </button>
+      </form>
+    </div>
   );
 }
-
-const Logo = styled.h1`
-  font-family: "Permanent Marker", cursive;
-  font-size: 3rem;
-  color: deeppink;
-  margin: 8px 0 16px;
-`;
-
-const Wrapper = styled.section`
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 16px;
-`;
-
-const Divider = styled.hr`
-  border: none;
-  border-bottom: 1px solid #ccc;
-  margin: 16px 0;
-`;
 
 export default Login;
