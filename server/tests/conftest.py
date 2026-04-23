@@ -4,6 +4,7 @@ Shared pytest fixtures.
 All tests use an in-memory SQLite database so they are fast, isolated, and
 leave no artefacts on disk.
 """
+
 import pytest
 
 from app import create_app
@@ -39,7 +40,7 @@ def db(app):
 @pytest.fixture
 def alice(db):
     """A persisted test user."""
-    user = User(username="alice")
+    user = User(username="alice@example.com")
     user.set_password("password123")
     db.session.add(user)
     db.session.commit()
@@ -49,7 +50,7 @@ def alice(db):
 @pytest.fixture
 def bob(db):
     """A second persisted test user."""
-    user = User(username="bob")
+    user = User(username="bob@example.com")
     user.set_password("password123")
     db.session.add(user)
     db.session.commit()
@@ -59,7 +60,9 @@ def bob(db):
 @pytest.fixture
 def alice_token(client, alice):
     """JWT token for alice obtained via the login endpoint."""
-    resp = client.post("/login", json={"username": "alice", "password": "password123"})
+    resp = client.post(
+        "/login", json={"username": "alice@example.com", "password": "password123"}
+    )
     return resp.get_json()["token"]
 
 
