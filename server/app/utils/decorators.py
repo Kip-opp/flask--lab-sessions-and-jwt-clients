@@ -8,7 +8,9 @@ positional argument to the wrapped view function.
 Any route decorated with ``@token_required`` will automatically return 401
 when no valid token is present.
 """
+
 from functools import wraps
+from typing import Union
 
 from flask import request
 
@@ -53,7 +55,7 @@ def token_required(f):
 # ------------------------------------------------------------------ #
 
 
-def _extract_token() -> str | None:
+def _extract_token() -> Union[str, None]:
     """Parse the Bearer token from the Authorization header.
 
     Returns the raw token string, or *None* if the header is absent or

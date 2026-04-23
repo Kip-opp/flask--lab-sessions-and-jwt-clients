@@ -4,7 +4,7 @@ Note and Tag models.
 ``Note`` is the primary resource of this application.  Each note belongs to
 exactly one user and may optionally carry a ``Tag`` label.
 
-``Tag`` is the *additional resource* required by the rubric.  It has two
+``Tag`` is the *additional resource*.  It has two
 custom fields beyond the foreign key: ``name`` and ``color``.
 """
 from datetime import datetime

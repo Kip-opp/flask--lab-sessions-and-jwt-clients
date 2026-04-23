@@ -1,7 +1,8 @@
 """
 Authentication routes.
- 
+
 """
+
 from flask import Blueprint, request
 
 from app.extensions import db
@@ -49,7 +50,7 @@ def signup():
 
     # --- Uniqueness check ---
     if User.query.filter_by(username=username).first():
-        return bad_request("Validation failed.", ["Username is already taken."])
+        return bad_request("Validation failed.", ["Username already registered."])
 
     # --- Persist ---
     try:
@@ -60,6 +61,7 @@ def signup():
     except Exception:
         db.session.rollback()
         from app.utils.responses import server_error
+
         return server_error("Could not create user. Please try again.")
 
     token = user.generate_token()
@@ -80,7 +82,9 @@ def login():
     password = data.get("password") or ""
 
     if not username or not password:
-        return bad_request("Validation failed.", ["Username and password are required."])
+        return bad_request(
+            "Validation failed.", ["Username and password are required."]
+        )
 
     user = User.query.filter_by(username=username).first()
 

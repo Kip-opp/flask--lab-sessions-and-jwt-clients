@@ -6,7 +6,9 @@ bcrypt is used to hash them before persistence.  JWT tokens are generated and
 verified directly on the model to keep auth logic co-located with the entity
 it describes.
 """
+
 from datetime import datetime, timedelta
+from typing import Union
 
 import jwt
 from flask import current_app
@@ -26,7 +28,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    username = db.Column(db.String(255), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
@@ -79,7 +81,7 @@ class User(db.Model):
         )
 
     @staticmethod
-    def verify_token(token: str) -> dict | None:
+    def verify_token(token: str) -> Union[dict, None]:
         """Decode and validate *token*.
 
         Returns the payload dict on success, or *None* if the token is
